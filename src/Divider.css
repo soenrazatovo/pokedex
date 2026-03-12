@@ -1,0 +1,20 @@
+.divider-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+    
+}
+
+.divider-svg {
+    position: absolute;
+    pointer-events: none;
+
+}
+
+.divider-text {
+    position: absolute;
+    margin: 0;
+}
