@@ -1,12 +1,12 @@
-import { useState } from "react"
 import "./Divider.css"
 
-function Divider({width, height, borderRadius, text = "", textSize, textColor = "black", backgroundColor, borderColor = "black", borderSize = "0px", topCorner = true, bottomCorner = true, zIndex = 0, onClick}) {
-    width = width.toString().replace("px","")
-    height = height.toString().replace("px","")
-    
+function Divider({width, height, borderRadius, text = "", textSize, textColor = "black", backgroundColor, borderColor = "black", borderSize = 0, topCorner = true, bottomCorner = true, zIndex = 0, onClick}) {
+    width = parseInt(width.toString().replace("px",""),10)
+    height = parseInt(height.toString().replace("px",""),10)
+    borderSize = parseInt(borderSize.toString().replace("px",""), 10)
+
     if (borderRadius){
-        borderRadius = borderRadius.toString().replace("px","")
+        borderRadius = parseInt(borderRadius.toString().replace("px",""),10)
         if (!(width >= borderRadius*2 && height >= borderRadius*4 && borderRadius != undefined && borderRadius != "")) {
             borderRadius = Math.min(width/2,height/4)
         }
@@ -17,8 +17,9 @@ function Divider({width, height, borderRadius, text = "", textSize, textColor = 
     return(
         <>
             { (width >= borderRadius*2 && height >= borderRadius*4 && borderRadius != undefined && borderRadius != "") &&
-                <div onClick={onClick} className={"divider-wrapper"} style={{width : width + "px", height : height-borderRadius*2 + "px", zIndex : zIndex}}>
-                    <svg className={"divider-svg"} style={{width : width + "px", height : height + "px"}}>
+                <div onClick={onClick} className={"divider-wrapper"} style={{width : width + borderSize/2 + "px", height : height-borderRadius*2 + "px", zIndex : zIndex}}>
+                    <svg className={"divider-svg"} style={{width : width + borderSize/2 + "px", height : height + "px"}}>
+                        <line x1={width} y1={topCorner ? 0 : borderRadius} x2={width} y2={bottomCorner ? height : height-borderRadius} stroke={backgroundColor} strokeWidth={borderSize}/>
                         <path d={
                         (topCorner ?
                             `
@@ -27,15 +28,15 @@ function Divider({width, height, borderRadius, text = "", textSize, textColor = 
                             `
                         :
                             `
-                            M ${width},${borderRadius}
+                            M ${width+borderSize},${borderRadius}
                             `
                         )
                         +
                         `
-                        L ${borderRadius},${borderRadius} 
-                        Q ${0},${borderRadius} ${0},${borderRadius*2} 
-                        L ${0},${height-borderRadius*2}
-                        Q ${0},${height-borderRadius} ${borderRadius},${height-borderRadius}
+                        L ${borderRadius+borderSize/2},${borderRadius} 
+                        Q ${0+borderSize/2},${borderRadius} ${0+borderSize/2},${borderRadius*2} 
+                        L ${0+borderSize/2},${height-borderRadius*2}
+                        Q ${0+borderSize/2},${height-borderRadius} ${borderRadius+borderSize/2},${height-borderRadius}
                         `
                         +
                         (bottomCorner ?
@@ -45,7 +46,7 @@ function Divider({width, height, borderRadius, text = "", textSize, textColor = 
                             `
                         :
                             `
-                            L ${width},${height-borderRadius}
+                            L ${width+borderSize},${height-borderRadius}
                             `
                         )
                         }
