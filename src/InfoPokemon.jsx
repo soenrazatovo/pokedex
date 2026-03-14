@@ -1,7 +1,10 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Divider from "./Divider.jsx"
 
-function InfoPokemon() {
+function InfoPokemon({pokemon}) {
+  console.log(pokemon)
+
   const numberGen = 6;
   const [currentDivider, setCurrentDivider] = useState(1)
 
@@ -27,6 +30,7 @@ function InfoPokemon() {
 
   return (
     <>
+      <Link to="/">&lt; Go back to search</Link>
       <h1>Poke API</h1>
       <div style={{display: "flex", alignItems: "stretch", margin: "50px"}}>
         <div>{Dividers}</div>
