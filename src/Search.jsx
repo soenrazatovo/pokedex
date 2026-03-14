@@ -16,12 +16,33 @@ function Search({onPokemonClick}) {
 
     const [currentPage, setCurrentPage] = useState(0)
     const pokemonPerPage = 20
+    const typeColors = {
+        normal: "#A8A77A",
+        fire: "#EE8130",
+        water: "#6390F0",
+        electric: "#F7D02C",
+        grass: "#7AC74C",
+        ice: "#96D9D6",
+        fighting: "#C22E28",
+        poison: "#A33EA1",
+        ground: "#E2BF65",
+        flying: "#A98FF3",
+        psychic: "#F95587",
+        bug: "#A6B91A",
+        rock: "#B6A136",
+        ghost: "#735797",
+        dragon: "#6F35FC",
+        dark: "#705746",
+        steel: "#B7B7CE",
+        fairy: "#D685AD"
+    }
     
     const toggleDropdown = () => {setDropdown(dropdown => !dropdown)}
     
     function ucwords(string){
         return string.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")
     }
+
 
     async function fetchURL(url){
         const res = await fetch(url, {headers: {"Method" : "GET", "Accept" : "application/json"}})
@@ -78,14 +99,14 @@ function Search({onPokemonClick}) {
         updatePagination()
     },[currentPage, searchedPokemons])
 
+    if (allTypes){
+        console.log(allTypes)
+    }
+    if (showedPokemons){
+        console.log(showedPokemons)
+    }
     return (
         <>  
-            <nav className={"nav-bar"}>
-                <button onClick={()=>{setCurrentPage(currentPage=> currentPage-1);}} disabled={currentPage==0}>Previous</button>
-                <h1>{currentPage}</h1>
-                <button onClick={()=>{setCurrentPage(currentPage=> currentPage+1);}} disabled={currentPage==Math.floor(searchedPokemons.length/pokemonPerPage)}>Next</button>
-            </nav>
-
             <div className={"search-bar"}>
                 
                 <div className="search-input">
@@ -114,15 +135,49 @@ function Search({onPokemonClick}) {
             </div>
             
 
-            {showedPokemons ? showedPokemons.map((currentPokemon,index) => (
-                <div key={index}>
-                    <h1>{ucwords(currentPokemon.name)}</h1>
-                    <img src={currentPokemon.sprites.other["official-artwork"]["front_default"]}/>
-                    <Link to="/info" onClick={()=>{onPokemonClick(currentPokemon)}}>More Info</Link>
+            {showedPokemons ?
+                <div className="pokemon-grid">
+                    {showedPokemons.map((currentPokemon,index) => {
+                        const mainType = currentPokemon.types[0]?.type?.name
+                        const cardColor = typeColors[mainType]
+                        return (
+                            <div key={index} className="pokemon-card" style={{ background: `linear-gradient(180deg, ${cardColor}33 0%, #ffffff 100%)`, borderColor: cardColor}}>
+                                <div className="card-header">
+                                    <div>
+                                        <h2>{ucwords(currentPokemon.name)}</h2>
+                                        <p className="pokedex-number">N°{currentPokemon.order >= 0 ? currentPokemon.order.toString().padStart(4, "0") : "????"}</p>
+                                    </div>
+                                    <div className="types">
+                                        {currentPokemon.types.map((typeInfo, index) => {
+                                            const typeId = typeInfo.type.url.split("/")[6]
+                                            const typeIcon = allTypes[typeId - 1].sprites["generation-viii"]["legends-arceus"]["name_icon"]
+                                            return (
+                                                <img
+                                                    key={index}
+                                                    src={typeIcon}
+                                                    alt={typeInfo.type.name}
+                                                    className="type-icon"
+                                                />
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                                <div className="card-body">
+                                    <img className="pokemon-artwork" src={currentPokemon.sprites.other["official-artwork"]["front_default"]} alt="Missing official artwork" />
+                                    <Link className="info-link" to="/info" onClick={()=>{onPokemonClick(currentPokemon)}}>More ...</Link>
+                                </div>
+                            </div>
+                        )})}
                 </div>
-            )):
-                <h1>Loading ...</h1>
+            :
+                <h1 className="loading-text">Loading ...</h1>
             }
+
+            <nav className={"nav-bar"}>
+                <button onClick={()=>{setCurrentPage(currentPage=> currentPage-1);}} disabled={currentPage==0}>Previous</button>
+                <h1>{currentPage}</h1>
+                <button onClick={()=>{setCurrentPage(currentPage=> currentPage+1);}} disabled={currentPage==Math.floor(searchedPokemons.length/pokemonPerPage)}>Next</button>
+            </nav>
         </>
     );
 }
