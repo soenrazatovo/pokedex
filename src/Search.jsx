@@ -43,11 +43,14 @@ function Search({onPokemonClick}) {
         return string.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")
     }
 
-
     async function fetchURL(url){
-        const res = await fetch(url, {headers: {"Method" : "GET", "Accept" : "application/json"}})
-        const data = await res.json()
-        return data
+        try {
+            const res = await fetch(url, {headers: {"Method" : "GET", "Accept" : "application/json"}})
+            const data = await res.json()
+            return data
+        } catch(err) {
+            console.error(err)
+        }
     }
 
     async function fetchAllTypes(){
@@ -99,12 +102,6 @@ function Search({onPokemonClick}) {
         updatePagination()
     },[currentPage, searchedPokemons])
 
-    if (allTypes){
-        console.log(allTypes)
-    }
-    if (showedPokemons){
-        console.log(showedPokemons)
-    }
     return (
         <>  
             <div className={"search-bar"}>
@@ -148,7 +145,7 @@ function Search({onPokemonClick}) {
                                         <p className="pokedex-number">N°{currentPokemon.order >= 0 ? currentPokemon.order.toString().padStart(4, "0") : "????"}</p>
                                     </div>
                                     <div className="types">
-                                        {currentPokemon.types.map((typeInfo, index) => {
+                                        {allTypes && currentPokemon.types.map((typeInfo, index) => {
                                             const typeId = typeInfo.type.url.split("/")[6]
                                             const typeIcon = allTypes[typeId - 1].sprites["generation-viii"]["legends-arceus"]["name_icon"]
                                             return (
@@ -164,7 +161,7 @@ function Search({onPokemonClick}) {
                                 </div>
                                 <div className="card-body">
                                     <img className="pokemon-artwork" src={currentPokemon.sprites.other["official-artwork"]["front_default"]} alt="Missing official artwork" />
-                                    <Link className="info-link" to="/info" onClick={()=>{onPokemonClick(currentPokemon)}}>More ...</Link>
+                                    <Link className="info-link" to={"/info?id="+currentPokemon.id} onClick={()=>{onPokemonClick(currentPokemon)}}>More ...</Link>
                                 </div>
                             </div>
                         )})}

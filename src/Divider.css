@@ -17,4 +17,5 @@
 .divider-text {
     position: absolute;
     margin: 0;
+    text-align: center;
 }
