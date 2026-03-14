@@ -1,11 +1,10 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom"
-import './App.css'
+import { useState } from "react"
 
 import InfoPokemon from "./InfoPokemon.jsx"
 import Search from "./Search.jsx"
-import { useEffect, useState } from "react"
 
-// https://pokeapi.co/api/v2/
+import './App.css'
 
 function App() {
   const [currentPokemon, setCurrentPokemon] = useState()
@@ -13,11 +12,6 @@ function App() {
   return (
     <>
       <BrowserRouter>
-
-      {/* <nav>
-        <Link to="/">Search</Link> | {" "}
-        <Link to="/info">Info</Link>
-      </nav> */}
 
       <Routes>
         <Route path="/" element={<Search  onPokemonClick={(value)=>{setCurrentPokemon(value)}} />} />
