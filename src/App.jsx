@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom"
 import { useEffect, useState } from "react"
 
 import InfoPokemon from "./InfoPokemon.jsx"
@@ -35,7 +35,7 @@ function App() {
 
     return (
         <>
-            <BrowserRouter>
+            <HashRouter>
 
                 {allTypes &&
                     <Routes>    
@@ -44,7 +44,7 @@ function App() {
                     </Routes>
                 }
 
-            </BrowserRouter>
+            </HashRouter>
 
         </>
     )

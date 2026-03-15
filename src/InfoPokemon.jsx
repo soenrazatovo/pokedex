@@ -137,9 +137,9 @@ function InfoPokemon({ allTypes }) {
                                 <h1 className="info-pokemon-name">{ucwords(allVarieties[indexCurrentVariety].name)} &#9654;</h1>
                                 <h3 className="info-pokemon-genus">{species.genera.filter(generaObj => (generaObj.language.name == "en"))[0].genus}</h3>
                             </div>
-                            {species.habitat &&
-                                <h3 className="info-pokemon-habitat">Found in : {ucwords(species.habitat.name)}</h3>
-                            }
+                                
+                            <h3 className="info-pokemon-habitat">{(allVarieties[indexCurrentVariety].order >= 0 ? "N°"+allVarieties[indexCurrentVariety].order.toString().padStart(4, "0") : "????") + " -- " + (species.habitat && "Can be found in : " + ucwords(species.habitat.name))}</h3>
+
                             <h4 className="info-pokemon-flavor">{species.flavor_text_entries.filter(entry => (entry.language.name == "en"))[0].flavor_text.replace("\n", " ").replace("\f", " ")}</h4>
                         
                             <h1 style={{marginTop: "64px", textAlign: "center"}}>More info will be added later ...</h1>
