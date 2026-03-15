@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import InfoPokemon from "./InfoPokemon.jsx"
 import Search from "./Search.jsx"
@@ -7,19 +7,47 @@ import Search from "./Search.jsx"
 import './App.css'
 
 function App() {
-  return (
-    <>
-      <BrowserRouter>
+    const [allTypes, setAllTypes] = useState()
 
-      <Routes>
-        <Route path="/" element={<Search />} />
-        <Route path="/info" element={<InfoPokemon />} />
-      </Routes>
-      
-    </BrowserRouter>
+    function ucwords(string){
+        return string.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")
+    }
 
-    </>
-  )
+    async function fetchURL(url){
+        try {
+            const res = await fetch(url, {headers: {"Method" : "GET", "Accept" : "application/json"}})
+            const data = await res.json()
+            return data
+        } catch(err) {
+            console.error(err)
+        }
+    }
+
+    async function fetchAllTypes() {
+        const allTypesData = await fetchURL("https://pokeapi.co/api/v2/type?limit=18")
+        const newallTypes = await Promise.all(allTypesData.results.map(async (type) => await fetchURL(type.url)))
+        setAllTypes(newallTypes)
+    }
+
+    useEffect(()=>{
+        fetchAllTypes()
+    },[])
+
+    return (
+        <>
+            <BrowserRouter>
+
+                {allTypes &&
+                    <Routes>    
+                        <Route path="/" element={<Search allTypes={allTypes}/>} />
+                        <Route path="/info" element={<InfoPokemon allTypes={allTypes}/>} />
+                    </Routes>
+                }
+
+            </BrowserRouter>
+
+        </>
+    )
 }
 
 export default App

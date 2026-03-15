@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import './Search.css'
 
-function Search({onPokemonClick}) {
-    const [allTypes, setAllTypes] = useState()
+function Search({allTypes}) {
+    // const [allTypes, setAllTypes] = useState()
     const [allPokemons, setAllPokemons] = useState()
 
     const [currentName, setCurrentName] = useState("")
@@ -53,11 +53,11 @@ function Search({onPokemonClick}) {
         }
     }
 
-    async function fetchAllTypes(){
-        const allTypesData = await fetchURL("https://pokeapi.co/api/v2/type?limit=18")
-        const newallTypes = await Promise.all(allTypesData.results.map(async (type) => await fetchURL(type.url)))
-        setAllTypes(newallTypes)
-    }
+    // async function fetchAllTypes(){
+    //     const allTypesData = await fetchURL("https://pokeapi.co/api/v2/type?limit=18")
+    //     const newallTypes = await Promise.all(allTypesData.results.map(async (type) => await fetchURL(type.url)))
+    //     setAllTypes(newallTypes)
+    // }
 
     async function fetchAllPokemons(){
         const pokemonsData = await fetchURL("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0")
@@ -90,7 +90,7 @@ function Search({onPokemonClick}) {
     }
 
     useEffect(()=>{
-        fetchAllTypes()
+        // fetchAllTypes()
         fetchAllPokemons()
     },[])
 
