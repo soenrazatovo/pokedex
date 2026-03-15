@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import useKeyPress from "./useKeyPress.jsx"
 import './Search.css'
 
 function Search({allTypes}) {
-    // const [allTypes, setAllTypes] = useState()
+    const isEnterPressed = useKeyPress("Enter")
+
     const [allPokemons, setAllPokemons] = useState()
 
     const [currentName, setCurrentName] = useState("")
@@ -53,12 +56,8 @@ function Search({allTypes}) {
         }
     }
 
-    // async function fetchAllTypes(){
-    //     const allTypesData = await fetchURL("https://pokeapi.co/api/v2/type?limit=18")
-    //     const newallTypes = await Promise.all(allTypesData.results.map(async (type) => await fetchURL(type.url)))
-    //     setAllTypes(newallTypes)
-    // }
-
+    // git commit -m ":sparkles: useKeyPress to search when pressing Enter
+    
     async function fetchAllPokemons(){
         const pokemonsData = await fetchURL("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0")
         setAllPokemons(pokemonsData.results)
@@ -72,10 +71,12 @@ function Search({allTypes}) {
 
             const newSearchedPokemons = pokemonList.filter((pokemon) => pokemon.name.includes(currentName.toLowerCase()))
                 
-            setSearchedPokemons(newSearchedPokemons)
-
-            if (currentPage!=0){
-                setCurrentPage(0)
+            if (JSON.stringify(newSearchedPokemons) != JSON.stringify(searchedPokemons)){
+                setSearchedPokemons(newSearchedPokemons)
+    
+                if (currentPage!=0){
+                    setCurrentPage(0)
+                }
             }
         }
     }
@@ -101,6 +102,12 @@ function Search({allTypes}) {
     useEffect(()=>{
         updatePagination()
     },[currentPage, searchedPokemons])
+
+    useEffect(()=>{
+        if (isEnterPressed) {
+            searchPokemons()
+        }
+    },[isEnterPressed])
 
     return (
         <>  

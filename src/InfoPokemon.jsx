@@ -11,7 +11,7 @@ function InfoPokemon({allTypes}) {
 
     const [currentSprites, setCurrentSprites] = useState()
     
-    const [gender, setGender] = useState("male")
+    const [gender, setGender] = useState("official")
     const [rarity, setRarity] = useState("default")
     const [indexCurrentSprite, setIndexCurrentSprite] = useState()
 
@@ -80,8 +80,8 @@ function InfoPokemon({allTypes}) {
         }
         
         setRarity("default")
-        setGender("male")
-        setIndexCurrentSprite(currentSprites["male"]["default"].length - 1)
+        setGender("official")
+        setIndexCurrentSprite(currentSprites["official"]["default"].length - 1)
         setCurrentSprites(currentSprites)
     }
 
