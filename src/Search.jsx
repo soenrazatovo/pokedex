@@ -55,8 +55,6 @@ function Search({allTypes}) {
             console.error(err)
         }
     }
-
-    // git commit -m ":sparkles: useKeyPress to search when pressing Enter
     
     async function fetchAllPokemons(){
         const pokemonsData = await fetchURL("https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0")
