@@ -49,7 +49,7 @@ function InfoPokemon({ allTypes }) {
                 setAllVarietes(allVarieties)
                 setSpecies(currentSpecies)
 
-                console.log(allVarieties, currentSpecies)
+                // console.log(allVarieties, currentSpecies)
 
             } catch (err) {
                 console.error(err)
@@ -62,45 +62,56 @@ function InfoPokemon({ allTypes }) {
     }
 
     async function fetchEvolutionChain(currentSpecies){
-        // Evolution chain
         const evolutionChain = await fetchURL(currentSpecies.evolution_chain.url)
-        let newContainer = await recursiveEvolutionChain(false,[evolutionChain.chain])
+        // console.log(evolutionChain)
+        let newContainer = await recursiveEvolutionChain(true,[evolutionChain.chain])
         setEvolutionContainer(newContainer)
     }
 
-    async function recursiveEvolutionChain(arrow, chains){
+    async function recursiveEvolutionChain(firstIteration, chains){
         if (!chains || chains.length === 0) {
             return null
         }
 
-        const curArrow = arrow
-        if (arrow == false) {
-            arrow = true
+        let isFirstIteration = firstIteration
+        if (firstIteration == true) {
+            firstIteration = false
         }
 
         const chainNodes = await Promise.all(chains.map(async chain => {
             const currSpecies = await fetchURL(chain.species.url)
             const baseVariety = await fetchURL(currSpecies.varieties[0].pokemon.url)
 
-            const nextDiv = await recursiveEvolutionChain(arrow, chain.evolves_to)
+            const nextDiv = await recursiveEvolutionChain(firstIteration, chain.evolves_to)
 
             const curDiv = (
-                <div style={{display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid #999", borderRadius: "8px", padding: "8px", width: "220px", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.12)"}}>
-                    <img style={{width: "64px", height: "64px", border: "1px solid #ccc", borderRadius: "4px"}} src={baseVariety.sprites.other["official-artwork"]["front_default"]} alt={baseVariety.name} />
-                    <div style={{marginTop: "4px", textTransform: "capitalize", fontWeight: 600}}>{baseVariety.name}</div>
-                    {chain.evolution_details && chain.evolution_details[0] &&
-                        <div style={{fontSize: "0.75rem", color: "#555", marginTop: "2px", textAlign: "center"}}>
-                            {ucwords(chain.evolution_details[0].trigger.name)}{chain.evolution_details[0].min_level ? ` @ Lv ${chain.evolution_details[0].min_level}` : ""}
-                        </div>
+                <div className={"evolution-pokemon"}>
+                    <img className={"evolution-img"} src={baseVariety.sprites.other["official-artwork"]["front_default"]} alt={baseVariety.name} />
+                    <h3 className={"evolution-name"}>{baseVariety.name}</h3>
+                    {chain.evolution_details &&
+                        chain.evolution_details.map((evolution_detail,index) => (
+                            <h4 key={index} className={"evolution-details"}>
+                                {ucwords(evolution_detail.trigger.name)}
+                                
+                                {evolution_detail.min_level ? " at Lv " + evolution_detail.min_level : ""}
+                                {evolution_detail.item ? " => " + ucwords(evolution_detail.item.name) : ""}
+                                {evolution_detail.time_of_day ? " during the " + evolution_detail.time_of_day : ""}
+                                {evolution_detail.min_happiness ? " with " + evolution_detail.min_happiness + " happiness" : ""}
+                                {evolution_detail.location ? " at " + ucwords(evolution_detail.location.name) : ""}
+                            </h4>
+
+                        ))
                     }
                     <Link to={"/info?id="+baseVariety.id}> Go to Page </Link>
                 </div>
             )
 
             const chainNode = (
-                <div key={chain.species.name} style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%", gap: "6px", paddingBottom: "6px"}}>
+                <div key={chain.species.name} className={"evolution-relation"}>
                     {curDiv}
-                    {nextDiv && <div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>{nextDiv}</div>}
+                    {nextDiv && 
+                        <div className={"evolution-next-evolutions"}>{nextDiv}</div>
+                    }
                 </div>
             )
 
@@ -109,10 +120,10 @@ function InfoPokemon({ allTypes }) {
 
         return (
             <>  
-                {curArrow &&
+                {!isFirstIteration &&
                     <h1>&darr;</h1>
                 }
-                <div style={{display: "flex", flexDirection: "width", alignItems: "center", gap: "12px", width: "100%"}}>
+                <div className={"evolution-level"} style={{marginTop: isFirstIteration ? "32px" : "" }}>
                     {chainNodes}
                 </div>
             </>
