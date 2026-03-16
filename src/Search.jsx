@@ -16,6 +16,7 @@ function Search({allTypes}) {
     const [showedPokemons, setShowedPokemons] = useState([])
 
     const [dropdown, setDropdown] = useState(false)
+    const [showShiny, setShowShiny] = useState(false)
 
     const [currentPage, setCurrentPage] = useState(0)
     const pokemonPerPage = 20
@@ -64,7 +65,7 @@ function Search({allTypes}) {
     function searchPokemons(){
         if (allPokemons){
             const pokemonList = currentType 
-            ? currentType.pokemon.map(poke => ({name : poke.pokemon.name, url: poke.pokemon.url}))
+            ? currentType.pokemon.map(poke => (poke.pokemon))
             : allPokemons
 
             const newSearchedPokemons = pokemonList.filter((pokemon) => pokemon.name.includes(currentName.toLowerCase()))
@@ -89,7 +90,6 @@ function Search({allTypes}) {
     }
 
     useEffect(()=>{
-        // fetchAllTypes()
         fetchAllPokemons()
     },[])
 
@@ -134,6 +134,11 @@ function Search({allTypes}) {
                         ))}
                     </div>
                 </div>
+                    
+                <div className="toggle-shiny">
+                    <input type="checkbox" name="toggle-shiny" value={showShiny} onClick={()=>{setShowShiny(showShiny => !showShiny)}}/>
+                    <label htmlFor="toggle-shiny">Show shiny</label>
+                </div>
             </div>
             
 
@@ -165,8 +170,8 @@ function Search({allTypes}) {
                                     </div>
                                 </div>
                                 <div className="card-body">
-                                    <img className="pokemon-artwork" src={currentPokemon.sprites.other["official-artwork"]["front_default"]} alt="Missing official artwork" />
-                                    <Link className="info-link" to={"/info?id="+currentPokemon.id} onClick={()=>{onPokemonClick(currentPokemon)}}>More ...</Link>
+                                    <img className="pokemon-artwork" src={currentPokemon.sprites.other["official-artwork"][showShiny ? "front_shiny" : "front_default"]} alt="Missing official artwork" />
+                                    <Link className="info-link" to={"/info?id="+currentPokemon.id}>More ...</Link>
                                 </div>
                             </div>
                         )})}

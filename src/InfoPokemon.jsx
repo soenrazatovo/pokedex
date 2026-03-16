@@ -16,6 +16,8 @@ function InfoPokemon({ allTypes }) {
     const [rarity, setRarity] = useState("default")
     const [indexCurrentSprite, setIndexCurrentSprite] = useState()
 
+    const [evolutionContainer, setEvolutionContainer] = useState()
+
     const navigate = useNavigate()
 
     function ucwords(string) {
@@ -42,6 +44,8 @@ function InfoPokemon({ allTypes }) {
                     }
                 }
 
+                fetchEvolutionChain(currentSpecies)
+
                 setAllVarietes(allVarieties)
                 setSpecies(currentSpecies)
 
@@ -55,6 +59,64 @@ function InfoPokemon({ allTypes }) {
         } else {
             navigate("/")
         }
+    }
+
+    async function fetchEvolutionChain(currentSpecies){
+        // Evolution chain
+        const evolutionChain = await fetchURL(currentSpecies.evolution_chain.url)
+        let newContainer = await recursiveEvolutionChain(false,[evolutionChain.chain])
+        setEvolutionContainer(newContainer)
+    }
+
+    async function recursiveEvolutionChain(arrow, chains){
+        if (!chains || chains.length === 0) {
+            return null
+        }
+
+        const curArrow = arrow
+        if (arrow == false) {
+            arrow = true
+        }
+
+        const chainNodes = await Promise.all(chains.map(async chain => {
+            const currSpecies = await fetchURL(chain.species.url)
+            const baseVariety = await fetchURL(currSpecies.varieties[0].pokemon.url)
+
+            const nextDiv = await recursiveEvolutionChain(arrow, chain.evolves_to)
+
+            const curDiv = (
+                <div style={{display: "flex", flexDirection: "column", alignItems: "center", border: "1px solid #999", borderRadius: "8px", padding: "8px", width: "220px", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,0.12)"}}>
+                    <img style={{width: "64px", height: "64px", border: "1px solid #ccc", borderRadius: "4px"}} src={baseVariety.sprites.other["official-artwork"]["front_default"]} alt={baseVariety.name} />
+                    <div style={{marginTop: "4px", textTransform: "capitalize", fontWeight: 600}}>{baseVariety.name}</div>
+                    {chain.evolution_details && chain.evolution_details[0] &&
+                        <div style={{fontSize: "0.75rem", color: "#555", marginTop: "2px", textAlign: "center"}}>
+                            {ucwords(chain.evolution_details[0].trigger.name)}{chain.evolution_details[0].min_level ? ` @ Lv ${chain.evolution_details[0].min_level}` : ""}
+                        </div>
+                    }
+                    <Link to={"/info?id="+baseVariety.id}> Go to Page </Link>
+                </div>
+            )
+
+            const chainNode = (
+                <div key={chain.species.name} style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%", gap: "6px", paddingBottom: "6px"}}>
+                    {curDiv}
+                    {nextDiv && <div style={{display: "flex", flexDirection: "column", alignItems: "center", width: "100%"}}>{nextDiv}</div>}
+                </div>
+            )
+
+            return chainNode
+        }))
+
+        return (
+            <>  
+                {curArrow &&
+                    <h1>&darr;</h1>
+                }
+                <div style={{display: "flex", flexDirection: "width", alignItems: "center", gap: "12px", width: "100%"}}>
+                    {chainNodes}
+                </div>
+            </>
+        )
     }
 
     function updateSprites() {
@@ -82,7 +144,6 @@ function InfoPokemon({ allTypes }) {
             }
         }
 
-        console.log(currentSprites)
         setRarity("default")
         setGender("official")
         setIndexCurrentSprite(currentSprites["official"]["default"].length - 1)
@@ -91,13 +152,13 @@ function InfoPokemon({ allTypes }) {
 
     useEffect(() => {
         fetchPokemon()
-    }, [])
+    }, [searchParams])
 
     useEffect(() => {
-        if (allVarieties) {
+        if (allVarieties && indexCurrentVariety != undefined) {
             updateSprites()
         }
-    }, [indexCurrentVariety])
+    }, [allVarieties, indexCurrentVariety])
 
     function changeGender(newGender) {
 
@@ -110,10 +171,6 @@ function InfoPokemon({ allTypes }) {
     const mutedColor = { text: "grey", background: "#a94c4c", border: "#9d0000" }
     const borderSize = 4
     const borderRadius = "45px"
-
-    // if (species) {
-    //     fetchURL(species.evolution_chain.url).then(res => console.log(res))
-    // }
 
     return (
         <>
@@ -142,7 +199,9 @@ function InfoPokemon({ allTypes }) {
 
                             <h4 className="info-pokemon-flavor">{species.flavor_text_entries.filter(entry => (entry.language.name == "en"))[0].flavor_text.replace("\n", " ").replace("\f", " ")}</h4>
                         
-                            <h1 style={{marginTop: "64px", textAlign: "center"}}>More info will be added later ...</h1>
+                            {/* <h1 style={{marginTop: "64px", textAlign: "center"}}>More info will be added later ...</h1> */}
+                            {evolutionContainer}
+
                         </div>
 
                         <div className="info-sprite-card">
@@ -170,9 +229,8 @@ function InfoPokemon({ allTypes }) {
                                     </div>
                                     <img className="info-pokemon-image" src={currentSprites[gender][rarity][indexCurrentSprite]} alt="pokemon" />
                                     <div className="info-sprite-controls">
-                                        {(currentSprites[gender][rarity].length - 1) > 0 ?
+                                        {(currentSprites[gender][rarity].length - 1) > 0 &&
                                             <button onClick={() => { setIndexCurrentSprite(Number(!indexCurrentSprite)) }}>&#9664;</button>
-                                            : console.log(gender, rarity, currentSprites[gender])
                                         }
                                         {currentSprites[gender]["shiny"].length != 0 &&
                                             <button onClick={() => { setRarity(rarity == "default" ? "shiny" : "default") }} className="rarity-button" style={{
