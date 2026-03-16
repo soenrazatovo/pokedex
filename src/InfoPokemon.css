@@ -128,8 +128,9 @@
     width: 100%;
 }
 
-.evolution-levels {
+.evolution-level {
     display: flex;
+    flex-wrap: nowrap;
     flex-direction: row;
     align-items: stretch;
     gap: 12px;
@@ -157,6 +158,14 @@
     flex-wrap: wrap;
 }
 
+.info-gender-row {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+    width: 100%;
+    margin-top: 8px;
+}
+
 .info-pokemon-image {
     width: 100%;
     object-fit: contain;
@@ -182,12 +191,15 @@
 
 .info-stats {
     width: 100%;
-    text-align: left;
+    /* text-align: left; */
     margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .info-stat-item {
-    font-size: 0.8rem;
+    font-size: 1rem;
     margin: 2px 0;
 }
 

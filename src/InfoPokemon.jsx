@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Divider from "./Divider.jsx"
+import Bar from './Bar.jsx';
+
 import "./InfoPokemon.css"
 
 function InfoPokemon({ allTypes }) {
@@ -232,7 +234,7 @@ function InfoPokemon({ allTypes }) {
                             </div>
                             {currentSprites &&
                                 <>
-                                    <div>
+                                    <div className={"info-gender-row"}>
                                         {currentSprites && Object.keys(currentSprites).map((currentGender,index) => (
                                             (currentSprites[currentGender]["default"].length != 0 || currentSprites[currentGender]["shiny"].length != 0) &&
                                             <button key={index} onClick={() => changeGender(currentGender)}>{ucwords(currentGender)}</button>
@@ -258,7 +260,10 @@ function InfoPokemon({ allTypes }) {
 
                                     <div className="info-stats">
                                 {allVarieties[indexCurrentVariety].stats.map((currentStat, index) => (
-                                    <div key={index} className="info-stat-item">{ucwords(currentStat.stat.name)}: {currentStat.base_stat}</div>
+                                    <>
+                                        <div key={index*2} className="info-stat-item">{ucwords(currentStat.stat.name)} : {currentStat.base_stat}</div>
+                                        <Bar key={index*2+1} value={currentStat.base_stat} maxValue={200} width={"200px"} height={"16px"} backgroundColor={"black"}/>
+                                    </>
                                 ))}
                             </div>
                             <div className="info-meta">
