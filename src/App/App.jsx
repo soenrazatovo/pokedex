@@ -1,17 +1,13 @@
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom"
 import { useEffect, useState } from "react"
 
-import InfoPokemon from "./InfoPokemon.jsx"
-import Search from "./Search.jsx"
+import InfoPokemon from "../InfoPokemon/InfoPokemon.jsx"
+import Search from "../Search/Search.jsx"
 
 import './App.css'
 
 function App() {
     const [allTypes, setAllTypes] = useState()
-
-    function ucwords(string){
-        return string.split("-").map(word => word[0].toUpperCase() + word.slice(1)).join(" ")
-    }
 
     async function fetchURL(url){
         try {

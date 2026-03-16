@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import Divider from "./Divider.jsx"
-import Bar from './Bar.jsx';
+
+import Divider from "../includes/Divider/Divider.jsx"
+import Bar from '../includes/Bar.jsx';
 
 import "./InfoPokemon.css"
 
@@ -258,12 +259,12 @@ function InfoPokemon({ allTypes }) {
                                 </>
                             }
 
-                                    <div className="info-stats">
+                                <div className="info-stats">
                                 {allVarieties[indexCurrentVariety].stats.map((currentStat, index) => (
-                                    <>
-                                        <div key={index*2} className="info-stat-item">{ucwords(currentStat.stat.name)} : {currentStat.base_stat}</div>
-                                        <Bar key={index*2+1} value={currentStat.base_stat} maxValue={200} width={"200px"} height={"16px"} backgroundColor={"black"}/>
-                                    </>
+                                    <div key={index}>
+                                        <h3 className="info-stat-item">{ucwords(currentStat.stat.name)} : {currentStat.base_stat}</h3>
+                                        <Bar value={currentStat.base_stat} maxValue={200} width={"200px"} height={"16px"} backgroundColor={"black"}/>
+                                    </div>
                                 ))}
                             </div>
                             <div className="info-meta">

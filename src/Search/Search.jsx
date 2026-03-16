@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import useKeyPress from "./useKeyPress.jsx"
+import useKeyPress from "../includes/useKeyPress.jsx"
 import './Search.css'
 
 function Search({allTypes}) {
