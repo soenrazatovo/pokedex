@@ -91,6 +91,7 @@ function Search({allTypes}) {
 
     useEffect(()=>{
         fetchAllPokemons()
+        document.title = "Pokedex"
     },[])
 
     useEffect(()=>{

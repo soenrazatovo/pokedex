@@ -38,6 +38,7 @@ function InfoPokemon({ allTypes }) {
             try {
 
                 const currentPokemon = await fetchURL("https://pokeapi.co/api/v2/pokemon/" + searchParams.get("id"))
+                document.title = "Pokedex - " + ucwords(currentPokemon.name)
                 const currentSpecies = await fetchURL(currentPokemon.species.url)
                 const allVarieties = await Promise.all(currentSpecies.varieties.map(async variety => await fetchURL(variety.pokemon.url)))
 
